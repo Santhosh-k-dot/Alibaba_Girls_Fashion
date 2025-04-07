@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginUserMutation } from '../redux/features/auth/authApi';
-import { setUser } from '../redux/features/auth/authSlice'; // ✅ Add this import
+import { setUser } from '../redux/features/auth/authSlice';
 
 const Login = () => {
     const [message, setMessage] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const dispatch = useDispatch(); // ✅ fixed typo
+    const dispatch = useDispatch();
     const [loginUser, { isLoading: loginLoading }] = useLoginUserMutation();
     const navigate = useNavigate();
 
-    // handle login
     const handleLogin = async (e) => {
         e.preventDefault();
         const data = { email, password };
@@ -22,10 +21,7 @@ const Login = () => {
             const response = await loginUser(data).unwrap();
             console.log(response);
             const { token, user } = response;
-            
-            // ✅ Dispatch setUser with user data
             dispatch(setUser({ user, token }));
-
             alert("Login successful");
             navigate("/");
         } catch (error) {
@@ -35,47 +31,53 @@ const Login = () => {
     };
 
     return (
-        <section className='h-screen flex items-center justify-center'>
-            <div className='max-w-sm border shadow bg-white mx-auto p-8'>
-                <h2 className='text-2xl font-semibold pt-5'>Please Login</h2>
+        <div className="flex min-h-screen bg-gray-900">
+            {/* Left Side - Image Section */}
+            <div className="hidden lg:flex lg:w-3/4 w-full bg-cover bg-center" style={{ backgroundImage: "url('https://plus.unsplash.com/premium_photo-1669748157617-a3a83cc8ea23?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c3Vuc2V0JTIwYmVhY2h8ZW58MHx8MHx8fDA%3D')" }}></div>
 
-                <form onSubmit={handleLogin} className='space-y-5 max-w-sm mx-auto pt-8'>
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder='Email Address'
-                        required
-                        className='w-full bg-gray-100 focus:outline-none px-5 py-3'
-                    />
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder='Password'
-                        required
-                        className='w-full bg-gray-100 focus:outline-none px-5 py-3'
-                    />
+            {/* Right Side - Login Form */}
+            <div className="flex flex-col justify-center items-center lg:w-1/4 w-full p-8 bg-gray-800 shadow-lg">
+                <div className="w-full max-w-md">
+                    <h2 className="text-3xl font-bold text-white mb-6 text-right">Please Login</h2>
 
-                    {message && <p className='text-red-500'>{message}</p>}
+                    <form onSubmit={handleLogin} className="space-y-5">
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email Address"
+                            required
+                            className="w-full bg-gray-700 text-white focus:outline-none px-5 py-3 border rounded-md"
+                        />
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
+                            required
+                            className="w-full bg-gray-700 text-white focus:outline-none px-5 py-3 border rounded-md"
+                        />
 
-                    <button
-                        type='submit'
-                        disabled={loginLoading}
-                        className={`w-full mt-5 bg-primary text-white hover:bg-indigo-500 font-medium py-3 rounded-md ${loginLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        {loginLoading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
+                        {message && <p className="text-red-500 text-sm text-right">{message}</p>}
 
-                <p className='my-5 italic text-sm text-center'>
-                    Don't have an account?
-                    <Link to="/register" className='text-red-700 px-1 underline'>Register</Link> here.
-                </p>
+                        <button
+                            type="submit"
+                            disabled={loginLoading}
+                            className={`w-full mt-5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-md ${loginLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                            {loginLoading ? 'Logging in...' : 'Login'}
+                        </button>
+                    </form>
+
+                    <p className="my-5 text-right text-white">
+                        Don't have an account?
+                        <Link to="/register" className="text-blue-400 italic"> Register</Link> here.
+                    </p>
+                </div>
             </div>
-        </section>
+        </div>
     );
 };
 
